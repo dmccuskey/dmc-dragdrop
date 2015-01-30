@@ -149,6 +149,7 @@ local Objects = require 'dmc_objects'
 
 
 local tinsert = table.insert
+local tremove = table.remove
 
 -- setup some aliases to make code cleaner
 local newClass = Objects.newClass
@@ -247,10 +248,10 @@ function DragDrop:__new__( ... )
 	self._registered = {}
 
 	-- list of registered objects with dragStart()
-	self._onDragStart = {}
+	self._onDragStartList = {}
 
 	-- list of registered objects with dragStop()
-	self._onDragStop = {}
+	self._onDragStopList = {}
 
 	-- Drag Targets Info
 	-- a hash, indexed by drag target source
@@ -338,11 +339,35 @@ function DragDrop:register( drop, params )
 
 	-- save for lookup optimization
 	if ds.dragStart then
-		tinsert( self._onDragStart, drop )
+		tinsert( self._onDragStartList, drop )
 	end
 	if ds.dragStop then
-		tinsert( self._onDragStop, drop )
+		tinsert( self._onDragStopList, drop )
 	end
+end
+
+
+function DragDrop:unregister( drop )
+	-- print( "DragDrop:unregister", drop )
+	assert( drop, "DragDrop:unregister requires drop target" )
+	--==--
+
+	local idx, list
+
+	self._registered[ drop ] = nil
+
+	idx, list = nil, self._onDragStartList
+	for i, item in ipairs( list ) do
+		if item==drop then idx=i; break end
+	end
+	if idx~=nil then tremove( list, idx ) end
+
+	idx, list = nil, self._onDragStopList
+	for i, item in ipairs( list ) do
+		if item==drop then idx=i; break end
+	end
+	if idx~=nil then tremove( list, idx ) end
+
 end
 
 
@@ -456,7 +481,7 @@ function DragDrop:_doDragStart( drag_proxy )
 	display.getCurrentStage():setFocus( drag_proxy )
 
 	local drag_info = self._drag_targets[ drag_proxy ]
-	local onDragStartList = self._onDragStart
+	local onDragStartList = self._onDragStartList
 	for i=1, #onDragStartList do
 
 		local o = onDragStartList[ i ]
@@ -484,7 +509,7 @@ function DragDrop:_doDragStop( drag_proxy )
 	display.getCurrentStage():setFocus( nil )
 
 	local drag_info = self._drag_targets[ drag_proxy ]
-	local onDragStartList = self._onDragStop
+	local onDragStartList = self._onDragStopList
 	for i=1, #onDragStartList do
 
 		local o = onDragStartList[ i ]
