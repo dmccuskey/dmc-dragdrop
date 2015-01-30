@@ -26,17 +26,6 @@ local DragMgr = require 'dmc_corona.dmc_dragdrop'
 
 display.setStatusBar( display.HiddenStatusBar )
 
-local COLOR_BLUE = { 25/255, 100/255, 255/255 }
-local COLOR_LIGHTBLUE = { 90/255, 170/255, 255/255 }
-local COLOR_GREEN = { 50/255, 255/255, 50/255 }
-local COLOR_LIGHTGREEN = { 170/255, 225/255, 170/255 }
-local COLOR_RED = { 255/255, 50/255, 50/255 }
-local COLOR_LIGHTRED = { 255/255, 120/255, 120/255 }
-local COLOR_GREY = { 180/255, 180/255, 180/255 }
-local COLOR_LIGHTGREY = { 200/255, 200/255, 200/255 }
-
-
-
 -- forward declares
 local dragExitHandler
 
@@ -54,8 +43,8 @@ local localGroup
 --
 local function createSquare( params )
 	params = params or {}
-	if params.fillColor==nil then params.fillColor=COLOR_LIGHTGREY end
-	if params.strokeColor==nil then params.strokeColor=COLOR_GREY end
+	if params.fillColor==nil then params.fillColor=DragMgr.COLOR_LIGHTGREY end
+	if params.strokeColor==nil then params.strokeColor=DragMgr.COLOR_GREY end
 	if params.strokeWidth==nil then params.strokeWidth=3 end
 	--==--
 	local o = display.newRect(0, 0, params.width, params.height )
@@ -102,7 +91,7 @@ local textScore, updateScore
 local dragStartHandler = function( e )
 
 	local target = e.target
-	target:setStrokeColor( unpack( COLOR_RED ) )
+	target:setStrokeColor( unpack( DragMgr.COLOR_RED ) )
 
 	return true
 end
@@ -113,7 +102,7 @@ end
 local dragEnterHandler = function( e )
 
 	local target = e.target
-	target:setFillColor( unpack( COLOR_LIGHTGREEN ) )
+	target:setFillColor( unpack( DragMgr.COLOR_LIGHTGREEN ) )
 
 	DragMgr:acceptDragDrop()
 
@@ -146,7 +135,7 @@ end
 dragExitHandler = function( e )
 
 	local target = e.target
-	target:setFillColor( unpack( COLOR_LIGHTBLUE ) )
+	target:setFillColor( unpack( DragMgr.COLOR_LIGHTBLUE ) )
 
 	return true
 end
@@ -157,7 +146,7 @@ end
 local dragStopHandler = function( e )
 
 	local target = e.target
-	target:setStrokeColor( unpack( COLOR_GREY ) )
+	target:setStrokeColor( unpack( DragMgr.COLOR_GREY ) )
 
 	return true
 end
@@ -168,8 +157,8 @@ end
 --
 local dropTarget = createSquare{
 	width=125, height=125,
-	fillColor=COLOR_LIGHTBLUE,
-	strokeColor=COLOR_GREY,
+	fillColor=DragMgr.COLOR_LIGHTBLUE,
+	strokeColor=DragMgr.COLOR_GREY,
 	strokeWidth=2
 }
 dropTarget.x, dropTarget.y = 160, 200
@@ -218,8 +207,8 @@ end
 --
 local dragItem = createSquare{
 	width=75, height=75,
-	fillColor=COLOR_LIGHTBLUE,
-	strokeColor=COLOR_GREY,
+	fillColor=DragMgr.COLOR_LIGHTBLUE,
+	strokeColor=DragMgr.COLOR_GREY,
 	strokeWidth=2
 }
 dragItem.x, dragItem.y = 160, 400
