@@ -28,7 +28,9 @@ module_config = {
 			},
 			{
 				"exp_dir": "dmc-dragdrop-oop",
-				"requires": []
+				"requires": [
+					"dmc-utils"
+				]
 			}
 		]
 	},
