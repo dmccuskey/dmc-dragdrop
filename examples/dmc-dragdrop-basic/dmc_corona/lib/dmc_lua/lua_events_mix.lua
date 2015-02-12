@@ -206,11 +206,24 @@ function Events.setEventFunc( self, func )
 end
 
 
+function Events.createEvent( self, ... )
+	return self.__event_func( self, ... )
+end
+
 function Events.dispatchEvent( self, ... )
 	-- print( "Events.dispatchEvent" )
 	local f = self.__event_func
 	self:_dispatchEvent( f( self, ... ) )
 end
+
+function Events.dispatchRawEvent( self, event )
+	-- print( "Events.dispatchRawEvent", event )
+	assert( type(event)=='table', "wrong type for event" )
+	assert( event.name, "event must have property 'name'")
+	--==--
+	self:_dispatchEvent( event )
+end
+
 
 
 -- addEventListener()
