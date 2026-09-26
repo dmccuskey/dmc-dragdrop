@@ -1,7 +1,7 @@
 --====================================================================--
 -- dmc_corona/dmc_dragdrop.lua
 --
--- Documentation: http://docs.davidmccuskey.com/
+-- Documentation: https://github.com/dmccuskey/dmc-dragdrop
 --====================================================================--
 
 --[[

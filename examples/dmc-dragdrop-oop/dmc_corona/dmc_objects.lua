@@ -1,7 +1,7 @@
 --====================================================================--
 -- dmc_objects.lua
 --
--- Documentation: http://docs.davidmccuskey.com/
+-- Documentation: https://github.com/dmccuskey/dmc-objects
 --====================================================================--
 
 --[[
