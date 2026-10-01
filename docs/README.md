@@ -14,13 +14,15 @@ New here? The [Quick Start](../README.md#quick-start) sets up a drag and a drop 
 
 ## Contribute
 
-- [Development](development.md): which files are generated, building, testing, possible future changes
+- [Development](development.md): which files are generated, building, tests, possible future changes
+- [Changelog](../CHANGELOG.md)
 - [Issues](https://github.com/dmccuskey/dmc-dragdrop/issues)
 
 ## Project Structure
 
 ```text
 README.md                   landing page and Quick Start
+CHANGELOG.md
 LICENSE
 docs/                       this documentation
 └── images/                 screenshots for the README
@@ -34,4 +36,8 @@ dmc_corona.cfg              library configuration
 examples/                   sample apps, each with its own generated dmc_corona/
 └── screenshots/            one per app, for examples/README.md
 Snakefile                   build rules for the generated copies
+tests/
+├── dmc_dragdrop_spec.lua
+├── lunatest.lua            test framework (Scott Vokes, MIT)
+└── run_unit.sh             runs the tests with plain Lua 5.1
 ```
