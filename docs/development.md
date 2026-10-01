@@ -29,7 +29,14 @@ The build copies the sibling checkouts as they are on disk, on whatever branch e
 
 ## Testing
 
-There are no automated tests. To check a change, run both examples in the Solar2D Simulator and drag onto each target, and away from it. A drag can also be scripted, to test without a mouse or for a screenshot: after `doDrag()`, the proxy is the top child of the stage, and it takes touch events from `dispatchEvent()`:
+The tests are in `tests/dmc_dragdrop_spec.lua` ([lunatest](https://github.com/silentbicycle/lunatest)). Run them with plain Lua 5.1, with stand-ins for the Solar2D globals they touch (`display`, the stage's `setFocus()`, `transition.to()`); it needs the `dkjson` rock:
+
+```sh
+tests/run_unit.sh                  # uses ../tools/lua51/bin/lua
+LUA=lua5.1 tests/run_unit.sh       # or another Lua 5.1
+```
+
+Then run both examples in the Solar2D Simulator and drag onto each target, and away from it. A drag can also be scripted, to test without a mouse or for a screenshot: after `doDrag()`, the proxy is the top child of the stage, and it takes touch events from `dispatchEvent()`:
 
 ```lua
 local function touch( o, phase, x, y )
@@ -47,8 +54,4 @@ touch( proxy, 'ended', 160, 200 )
 
 Each needs discussion and a concrete use case before it is worked on.
 
-- Survive a drop target being unregistered during a drag (treat it as a `dragExit` without the event), and ignore a second `register()` of the same target.
-- Move the proxy to the target's and initiator's content position (`localToContent()`), so that the end animation works inside moved groups.
-- Several drags at once, one per touch.
-- Options for the default proxy's colors and the animation times; drop the unused debug setting; export the version; remove the accidental global `_extend` (in the copied `Utils.extend()`).
-- Tests that run in plain Lua, with stand-ins for `display` and `transition`, like dmc-sockets' `tests/run_unit.sh`.
+- Give overlapping targets a defined order: the one drawn on top, or a priority ([#1](https://github.com/dmccuskey/dmc-dragdrop/issues/1)).

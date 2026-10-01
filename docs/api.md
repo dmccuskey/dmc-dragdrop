@@ -12,7 +12,7 @@ Everything dmc-dragdrop provides. [Using dmc-dragdrop](using-dragdrop.md) explai
 | [`DragMgr:acceptDragDrop()`](#dragmgracceptdragdrop) | in `dragEnter`: accept the drag |
 | [`DragMgr.display_name`](#dragmgrdisplay_name) | the property holding a non-display target's display object |
 | [Events](#events) | `dragStart`, `dragEnter`, `dragOver`, `dragExit`, `dragDrop`, `dragStop` |
-| [Constants](#constants) | `EVENT`, colors |
+| [Constants](#constants) | `VERSION`, `EVENT`, animation times, colors |
 | [Configuration](#configuration) | no settings |
 
 ## The Module
@@ -27,13 +27,15 @@ The module is the Drag Manager itself, created when it is first required. There 
 
 Starts a drag. Call it from a touch listener on the `'began'` phase.
 
-- `initiator`: the object the drag starts from. Its `width` and `height` size the default proxy; an unaccepted drag slides the proxy back to its `x`, `y`.
-- `event`: the touch event. The proxy is placed at `event.x`, `event.y` (plus the offsets) and given the touch focus.
+- `initiator`: the object the drag starts from. Its `width` and `height` size the default proxy; an unaccepted drag slides the proxy back to its centre on the screen.
+- `event`: the touch event. The proxy is placed at `event.x`, `event.y` (plus the offsets) and given the focus of this touch (`event.id`), so with multitouch on (`system.activate( 'multitouch' )`) several drags can run at once, one per finger, each with its own drop target.
 - `options`, a table, all optional:
 
 | Option | Default | Meaning |
 |---|---|---|
 | `proxy` | a light grey square with a grey border, the initiator's size | the display object that follows the finger. It is removed when the drag ends. |
+| `fillColor`, `strokeColor` | `DragMgr.COLOR_LIGHTGREY`, `DragMgr.COLOR_GREY` | the default proxy's colors, `{ r, g, b }` tables |
+| `strokeWidth` | `3` | the default proxy's border width |
 | `format` | `nil` | what is being dragged, usually a string; given to the drop targets as `event.format` |
 | `data` | `nil` | any value; given to the drop targets as `event.data` |
 | `xOffset`, `yOffset` | `0` | where the proxy is drawn, relative to the touch point |
@@ -47,13 +49,17 @@ Makes `target` a drop target. `target` is a display object, or an object whose `
 
 `handlers` is a table with any of the [event](#events) names as keys and functions as values; each is called as `handler( event )`. Without `handlers`, the target's own methods of those names are called, as `target:dragEnter( event )`.
 
+Registering a target again replaces its handlers.
+
 ### DragMgr:unregister( target )
 
 Removes a drop target. Call it before removing the target from the screen.
 
+A drag over the target carries on as if over nothing. The target gets no more events, not even `dragExit` or `dragStop`, so reset its look yourself if a drag changed it.
+
 ### DragMgr:acceptDragDrop()
 
-Accepts the current drag for the target that is receiving `dragEnter`. Call it in `dragEnter`; without it, the target gets no `dragOver`, `dragExit` or `dragDrop` for this visit.
+Accepts the drag being handled, for the target that is receiving `dragEnter`. Call it in `dragEnter`; without it, the target gets no `dragOver`, `dragExit` or `dragDrop` for this visit. Called outside a handler, it does nothing.
 
 ### DragMgr.display_name
 
@@ -89,7 +95,10 @@ The handlers' return values aren't needed.
 
 | Name | Value |
 |---|---|
+| `DragMgr.VERSION` | the module's version, `'0.6.0'` |
 | `DragMgr.EVENT` | `'drag-drop-event'`, the events' `name` |
+| `DragMgr.ANIMATE_TIME_FAST` | `100`: milliseconds for an accepted proxy to shrink onto the target; can be set |
+| `DragMgr.ANIMATE_TIME_SLOW` | `300`: milliseconds for a refused proxy to slide back; can be set |
 | `DragMgr.COLOR_BLUE`, `COLOR_LIGHTBLUE`, `COLOR_GREEN`, `COLOR_LIGHTGREEN`, `COLOR_RED`, `COLOR_LIGHTRED`, `COLOR_GREY`, `COLOR_LIGHTGREY` | `{ r, g, b }` tables (0 to 1) for `setFillColor( unpack( ... ) )`, used by the examples |
 
 ## Configuration
@@ -98,10 +107,4 @@ dmc-dragdrop has no settings. Its `dmc_corona.cfg` section, `[DMC_DRAGDROP]`, ca
 
 ## Known Issues
 
-- **Unregistering the target under the finger breaks the drag.** If `unregister()` is called for the target a drag is over (for example from a timer), every later touch event of that drag raises `attempt to index local 'ds' (a nil value)`: the proxy stays on the screen and holds the touch focus. The basic example unregisters its target after 10 seconds, but a drag at that moment has to be over the target to hit this.
-- **One drag at a time.** The Drag Manager keeps one current drop target, so two drags with different fingers at once get mixed up.
-- **The end animation uses `x`, `y`.** The proxy moves to the drop target's (or the initiator's) `x` and `y`, which are relative to its parent group. For an object inside a moved or scaled group, the proxy goes to the wrong place.
-- **Registering a target twice** sends it `dragStart` and `dragStop` twice.
-- **Overlapping targets:** which one gets the drag isn't defined.
-- The default proxy's colors can't be changed: pass your own `proxy` instead. Changing `DragMgr.ANIMATE_TIME_SLOW` or `ANIMATE_TIME_FAST` has no effect.
-- `DEBUG_ACTIVE` in older copies of `dmc_corona.cfg` isn't read. The module doesn't export its version (0.5.0), and it leaks the global `_extend`.
+- **Overlapping targets:** which one gets the drag isn't defined ([#1](https://github.com/dmccuskey/dmc-dragdrop/issues/1)).

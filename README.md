@@ -28,6 +28,7 @@ It is modeled on the Adobe Flex Drag Manager.
 - Six events for each drop target: `dragStart`, `dragEnter`, `dragOver`, `dragExit`, `dragDrop`, `dragStop`, as callbacks or as the target's own methods
 - Each target decides what it accepts, from a `format` string and any `data` you pass along
 - The proxy shrinks into the target on a drop, or slides back where it came from
+- Several drags at once, one per finger, with multitouch on
 - Pure Lua, no plugins needed; MIT licensed
 
 ## Quick Start
@@ -171,6 +172,7 @@ To update, copy `dmc_corona_boot.lua` and `dmc_corona/` again from the newer ver
 - [Using dmc-dragdrop](docs/using-dragdrop.md): initiators, proxies and drop targets, the drag and drop cycle, formats and data, drop targets as objects
 - [API reference](docs/api.md): `doDrag()`, `register()`, `acceptDragDrop()`, the events, configuration, known issues
 - [Examples](examples/): a basic drop target with a score, and drop targets as dmc-objects classes that accept different formats
+- [Changelog](CHANGELOG.md)
 
 Everything else is listed on the [documentation home](docs/README.md).
 

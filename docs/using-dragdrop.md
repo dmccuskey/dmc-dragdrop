@@ -43,10 +43,11 @@ DragMgr:doDrag( event.target, event, {
 	data = { name='apple', price=2 },  -- anything else they need
 	yOffset = -30,        -- show the proxy above the finger
 	alpha = 0.8,          -- the proxy's alpha (default 0.5)
+	fillColor = { 1, 0.5, 0.3 },  -- the default square's colors, if no proxy is given
 } )
 ```
 
-Create a new proxy for each drag: the Drag Manager removes it (`removeSelf()`) when the drag ends. The finger decides where a drop lands, not the proxy: with an offset, the proxy is drawn away from the touch point, but the target under the touch point is the one that counts.
+Create a new proxy for each drag: the Drag Manager removes it (`removeSelf()`) when the drag ends. With multitouch on (`system.activate( 'multitouch' )`), each finger can drag at the same time: every drag has its own proxy, drop target and acceptance. The finger decides where a drop lands, not the proxy: with an offset, the proxy is drawn away from the touch point, but the target under the touch point is the one that counts.
 
 ## Drop Targets
 
@@ -74,7 +75,7 @@ Every handler is optional, but a target without `dragEnter` can never accept a d
 }
 ```
 
-`DragMgr:unregister( target )` removes a target. Do it before you remove the target from the screen, and not while a drag is over it ([Known Issues](api.md#known-issues)).
+`DragMgr:unregister( target )` removes a target. Do it before you remove the target from the screen. A drag over it carries on as if over nothing; the target gets no more events, not even `dragExit` or `dragStop`. Registering a target again replaces its handlers.
 
 ## The Drag and Drop Cycle
 
@@ -92,8 +93,8 @@ In short: `dragStart` and `dragStop` bracket every drag, on every target, so a t
 Some details:
 
 - After `dragDrop` there is no `dragExit`: reset the target's look in `dragDrop` too (the examples call their `dragExit` handler from it).
-- Only the touch point is tested, against each target's `contentBounds`. Where targets overlap, which one gets the drag isn't defined.
-- When a drop is accepted, the proxy moves to the target's `x`, `y` and shrinks, in 100 ms. Otherwise it slides back to the initiator's `x`, `y`, in 300 ms. Then it is removed. `dragStop` is sent as the animation starts.
+- Only the touch point is tested, against each target's `contentBounds`. Where targets overlap, which one gets the drag isn't defined ([#1](https://github.com/dmccuskey/dmc-dragdrop/issues/1)).
+- When a drop is accepted, the proxy moves to the target's centre on the screen and shrinks, in 100 ms (`DragMgr.ANIMATE_TIME_FAST`). Otherwise it slides back to the initiator's centre, in 300 ms (`DragMgr.ANIMATE_TIME_SLOW`). Both work inside moved and scaled groups. Then it is removed. `dragStop` is sent as the animation starts.
 
 ## Formats and Data
 
